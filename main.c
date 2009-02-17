@@ -9,7 +9,7 @@ float angleMX = 0.0f, angleMY = 0.0f;
 float width,height;
 float lX, lY;
 const float piover180 = 0.0174532925f;
-int frame,time,timebase=0;
+int frame,time,timebase=0,timerender=0;
 float xpos = 0.0f, zpos = 0.0f, ypos = 0.0f;
 int dir = 0;
 float movey=100.0f, movex=100.0f;
@@ -127,6 +127,25 @@ void DrawWallQuadX(GLfloat x, int s){
 }
 
 void renderScene(){
+  int moveframe = 0;
+  frame++;
+
+
+  time = glutGet(GLUT_ELAPSED_TIME);
+  fprintf(stderr, "time: %d \n", time);
+  if(time-timebase > 1000){
+    sprintf(wTitle, "FPS: %.0f",frame*1000.0/(time-timebase) );
+    glutSetWindowTitle(wTitle);
+    //		fprintf(stdout, "FPS: %4.2f \n", frame*1000.0/(time-timebase));
+    timebase = time;
+    frame = 0;
+  }
+
+  if(time-timerender > 500){
+    /* tempo da correggere */
+    moveframe = 1;
+    timerender = time;
+  }
 
 /*   xpos -= (float)sin(angleX*piover180) * 0.010f; */
 /*   ypos -= (float)sin(angleY*piover180) * 0.010f; */
@@ -189,10 +208,11 @@ void renderScene(){
       angleMX = angleX;
     }
     
-    if(kmov){
+    if(kmov && moveframe){
       //muove sul piano x
-      xpos -= (float)sin(angleX*piover180) * 0.05f;
-      zpos -= (float)cos(angleX*piover180) * 0.05f;
+      xpos -= (float)sin(angleX*piover180) * 1.05f;
+      zpos -= (float)cos(angleX*piover180) * 1.05f;
+      moveframe = 0;
     }
   }else{
     int translate = 1;
@@ -232,24 +252,16 @@ void renderScene(){
     }
 
 
-    if(translate){
+    if(translate && moveframe){
       //      angleTY = angleY;
       //muove sul piano y
-      ypos += (float)sin(angleY*piover180) * 0.05f;
-      zpos += (float)cos(angleY*piover180) * 0.05f;
+      ypos += (float)sin(angleY*piover180) * 1.05f;
+      zpos += (float)cos(angleY*piover180) * 1.05f;
+      moveframe = 0;
     }
 
   }
 
-  frame++;
-  time = glutGet(GLUT_ELAPSED_TIME);
-  if(time-timebase > 1000){
-    sprintf(wTitle, "FPS: %.0f",frame*1000.0/(time-timebase) );
-    glutSetWindowTitle(wTitle);
-    //		fprintf(stdout, "FPS: %4.2f \n", frame*1000.0/(time-timebase));
-    timebase = time;
-    frame = 0;
-  }
   
   
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
