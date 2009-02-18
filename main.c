@@ -132,7 +132,7 @@ void renderScene(){
 
 
   time = glutGet(GLUT_ELAPSED_TIME);
-  fprintf(stderr, "time: %d \n", time);
+/*   fprintf(stderr, "time: %d \n", time); */
   if(time-timebase > 1000){
     sprintf(wTitle, "FPS: %.0f",frame*1000.0/(time-timebase) );
     glutSetWindowTitle(wTitle);
@@ -144,7 +144,7 @@ void renderScene(){
   if(time-timerender > 500){
     /* tempo da correggere */
     moveframe = 1;
-    timerender = time;
+    timerender = time + ((time-timerender)-500);
   }
 
 /*   xpos -= (float)sin(angleX*piover180) * 0.010f; */
@@ -155,15 +155,16 @@ void renderScene(){
     //fa l'effetto di moveimento lento
     // e' qui dato che la dir e' 0 quando si ritorna sul piano "orizzontale"
     //va in basso/alto
-    if((angleTX == angleX)&&(angleY != angleTY)){
+    /* if((angleTX == angleX)&&(angleY != angleTY)){ */
+    if((angleY != angleTY)){
       movey++;
       if((ud==0)&&((lastkey==1)||(lud==2))){
-	angleY -= 1.0f;
+	angleY -= 3.0f;
 	if(angleY<angleTY)
 	  angleY = angleTY;
       }   
       if((ud==0)&&((lastkey==2)||(lud==1))){
-	angleY += 1.0f;
+	angleY += 3.0f;
 	if(angleY>angleTY)
 	  angleY = angleTY;
       }
@@ -180,24 +181,24 @@ void renderScene(){
       movex++;
       if(lud==0){
 	if(lr==1){
-	  angleX -= 1.0f;
+	  angleX -= 3.0f;
 	  if(angleX<angleTX)
 	    angleX = angleTX;
 	}
 	if(lr==2){
-	  angleX += 1.0f;
+	  angleX += 3.0f;
 	  if(angleX>angleTX)
 	    angleX = angleTX;
 
 	}
       }else{
 	if(lr==1){
-	  angleX -= 2.0f;
+	  angleX -= 3.0f;
 	  if(angleX<angleTX)
 	    angleX = angleTX;
 	}
 	if(lr==2){
-	  angleX += 2.0f;
+	  angleX += 3.0f;
 	  if(angleX>angleTX)
 	    angleX = angleTX;
 
@@ -217,15 +218,16 @@ void renderScene(){
   }else{
     int translate = 1;
     //prima di tutto bisogna controllare che anche l'angolo X sia a 0
+    // sistema la visuale prima di salire
     if((angleX!= angleMX)&&(isBusy())){
       if(angleX<angleMX){
-	angleMX--;
+	angleMX-=3.0f;
 	if(angleMX<angleX)
 	  angleMX= angleX;
       }
 
       if(angleX>angleMX){
-	angleMX++;
+	angleMX+=3.0f;
 	if(angleMX>angleX)
 	  angleMX= angleX;
       }
@@ -233,15 +235,16 @@ void renderScene(){
     }
 
     // fa l'effetto di movimento lento alto basso
-    if((angleX == angleMX)&&(angleTY != angleY)){
+/*     if((angleX == angleMX)&&(angleTY != angleY)){ */
+    if((angleTY != angleY)){
       movey++;
       if(ud==1){ //va in su
-	angleY -= 1.0f;
+	angleY -= 3.0f;
 	if(angleY<angleTY)
 	  angleY = angleTY;
       }
       if(ud==2){ //va in giu'
-	angleY += 1.0f;
+	angleY += 3.0f;
 	if(angleY>angleTY)
 	  angleY = angleTY;
       }
@@ -409,10 +412,10 @@ void processMouse(int x, int y) {
   angleMY += tmpY*0.25f;
 
   //limito il mouse in modo che non discosti mai di 45 gradi
-  if( (angleMY > (angleY+30.0f)) ||  (angleMY< (angleY-30.0f) ))
+  if( (angleMY > (angleY+45.0f)) ||  (angleMY< (angleY-45.0f) ))
     angleMY -= tmpY*0.25f;
 
-  if( (angleMX > (angleX+30.0f)) ||  (angleMX< (angleX-30.0f) ))
+  if( (angleMX > (angleX+45.0f)) ||  (angleMX< (angleX-45.0f) ))
     angleMX -= tmpX*0.25f;
 
 
@@ -455,7 +458,7 @@ void keyFunc(int key, int x, int y){
 /*       angleY += 90.0f; */
 /*       movey = 1; */
       angleTY = angleY + 90.0f;
-      fprintf(stderr, "X %f -  MX %f -  TX %f\n", angleY, angleMY, angleTY);
+/*       fprintf(stderr, "X %f -  MX %f -  TX %f\n", angleY, angleMY, angleTY); */
       angleY = angleMY;
       if(dir==0){
 	dir ++;
@@ -472,7 +475,7 @@ void keyFunc(int key, int x, int y){
   }
 
   if(key == GLUT_KEY_LEFT){
-    fprintf(stderr, "X %f -  MX %f -  TX %f\n", angleX, angleMX, angleTX);
+/*     fprintf(stderr, "X %f -  MX %f -  TX %f\n", angleX, angleMX, angleTX); */
 
       if(ud == 2){
 /* 	angleY -= 90.0f; */
